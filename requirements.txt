@@ -1,0 +1,7 @@
+dash
+dash-bootstrap-components
+dash-mantine-components
+faker
+pandas
+pyarrow
+plotly
