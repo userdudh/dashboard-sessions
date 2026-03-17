@@ -9,10 +9,14 @@ from src.callbacks.register import register_callbacks
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
 server = app.server
 
-df = preprocess(data_loader())
+dfs = {
+    "m1": preprocess(data_loader(1)),
+    "m2": preprocess(data_loader(2)),
+    "m3": preprocess(data_loader(3))
+}
 
-app.layout = create_layout(df)
-register_callbacks(app, df)
+app.layout = create_layout(dfs["m1"])
+register_callbacks(app, dfs)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

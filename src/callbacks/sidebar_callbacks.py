@@ -1,10 +1,8 @@
 from dash import Input, Output
 import pandas as pd
-from src.core.load import data_loader
-from src.core.preprocess import preprocess
 from src.core.session_methods import method_1
 
-def register_sidebar_callbacks(app, _unused_df):
+def register_sidebar_callbacks(app, dfs):
 
     @app.callback(
         Output("users-select", "options"),
@@ -12,11 +10,10 @@ def register_sidebar_callbacks(app, _unused_df):
         Input("method-tabs", "active_tab"),
     )
     def order_students(order_value, active_method):
-        method_num = int(active_method.replace("m", "")) if active_method else 1
+        method_key = active_method if active_method else "m1"
+        df_current = dfs.get(method_key)
         
-        df_current = preprocess(data_loader(method_num))
-        
-        if df_current.empty:
+        if df_current is None or df_current.empty:
             return []
 
         sessions_df = method_1(df_current)

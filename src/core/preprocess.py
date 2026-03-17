@@ -9,10 +9,6 @@ def preprocess(df):
         return df
     
     df = df.copy()
-
-    if "datetime" in df.columns:
-        df["datetime"] = pd.to_datetime(df["datetime"])
-
     df = df.sort_values(["username", "timecreated"], ignore_index=True)
 
     users = df["username"].dropna().unique()

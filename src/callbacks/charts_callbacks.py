@@ -2,24 +2,14 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from dash import Input, Output
-
-from src.core.load import data_loader
-from src.core.preprocess import preprocess
 from src.core.session_methods import method_1, method_2, method_3
 
 METHODS = {"m1": method_1, "m2": method_2, "m3": method_3}
 
-# =========================
-# CONFIG VISUAL
-# =========================
 MIN_GRAPH1_HEIGHT = 700
 ROW_HEIGHT = 85
 BASE_HEIGHT = 140
 BARGAP = 0.55
-
-# ==============================
-# CONFIG SESSÕES CURTAS
-# ==============================
 LIMIAR_MINUTOS = 5
 DURACAO_MINIMA_VISUAL_MINUTOS = 5
 
@@ -103,9 +93,10 @@ def fig_gantt_sessions(payload, height=MIN_GRAPH1_HEIGHT):
         y="display_name",
         color="kind",
         color_discrete_map={"session": "#3B82F6", "no_session": "#BDBDBD"},
+        custom_data=["session_label", "inicio_str", "fim_str"]
     )
 
-    fig.update_traces(text=None, hovertemplate=None, customdata=None)
+    fig.update_traces(text=None)
 
     for tr in fig.data:
         if tr.name == "no_session":
@@ -114,9 +105,9 @@ def fig_gantt_sessions(payload, height=MIN_GRAPH1_HEIGHT):
             tr.insidetextanchor = "middle"
             tr.textfont = dict(color="black", size=12)
             tr.hoverinfo = "skip"
+            tr.hovertemplate = None
         elif tr.name == "session":
-            session_rows = plot_df[plot_df["kind"] == "session"][["session_label", "inicio_str", "fim_str"]].to_numpy()
-            tr.customdata = session_rows
+
             tr.hovertemplate = (
                 "<b>%{y}</b><br>"
                 "%{customdata[0]}<br>"
@@ -186,8 +177,7 @@ def fig_week_bars(payload, height=520):
     fig.update_yaxes(range=[24 * 60, 0], tickvals=list(range(0, 24 * 60, 60)), ticktext=[f"{h:02d}:00" for h in range(24)])
     return fig
 
-
-def register_charts_callbacks(app, _unused_df):
+def register_charts_callbacks(app, dfs):
     @app.callback(
         Output("sessions-store", "data"),
         Input("filters-store", "data"),
@@ -197,12 +187,10 @@ def register_charts_callbacks(app, _unused_df):
             return {"sessions": [], "users": [], "start": None, "end": None}
 
         method_key = filters.get("method", "m1")
-        method_number = int(method_key.replace("m", ""))
         
-        df_raw = data_loader(method_number)
-        df_clean = preprocess(df_raw)
+        df_clean = dfs.get(method_key)
 
-        if df_clean.empty:
+        if df_clean is None or df_clean.empty:
             return {"sessions": [], "users": [], "start": None, "end": None}
 
         name_map = df_clean.set_index("username")["display_name"].to_dict()
@@ -214,13 +202,14 @@ def register_charts_callbacks(app, _unused_df):
         if users:
             dff = dff[dff["username"].isin(users)]
 
-        if start and end:
-            start_dt = pd.to_datetime(start)
-            end_dt = pd.to_datetime(end) + pd.Timedelta(days=1)
-            dff = dff[(dff["datetime"] >= start_dt) & (dff["datetime"] < end_dt)]
 
         fn = METHODS.get(method_key, method_1)
         sessions = fn(dff)
+
+        if not sessions.empty and start and end:
+            start_dt = pd.to_datetime(start)
+            end_dt = pd.to_datetime(end) + pd.Timedelta(days=1)
+            sessions = sessions[(sessions["fim"] >= start_dt) & (sessions["inicio"] < end_dt)]
 
         if not sessions.empty:
             sessions = sessions.copy()
