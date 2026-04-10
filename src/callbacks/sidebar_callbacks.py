@@ -6,15 +6,20 @@ def register_sidebar_callbacks(app, dfs):
 
     @app.callback(
         Output("users-select", "options"),
+        Input("course-select", "value"), # Escuta o curso selecionado
         Input("order-select", "value"),
         Input("method-tabs", "active_tab"),
     )
-    def order_students(order_value, active_method):
+    def order_students(course, order_value, active_method):
         method_key = active_method if active_method else "m1"
         df_current = dfs.get(method_key)
         
         if df_current is None or df_current.empty:
             return []
+
+        # Filtra o DataFrame base pelo único curso selecionado
+        if course:
+            df_current = df_current[df_current["courseid"] == course]
 
         sessions_df = method_1(df_current)
         sessions_count = sessions_df.groupby("username").size().to_dict()
@@ -42,11 +47,12 @@ def register_sidebar_callbacks(app, dfs):
     @app.callback(
         Output("filters-store", "data"),
         Input("method-tabs", "active_tab"),
+        Input("course-select", "value"), 
         Input("order-select", "value"),
         Input("users-select", "value"),
         Input("date-reserva", "value"),
     )
-    def build_filters(method, order, users, date_value):
+    def build_filters(method, course, order, users, date_value):
         start = None
         end = None
 
@@ -56,6 +62,7 @@ def register_sidebar_callbacks(app, dfs):
 
         return {
             "method": method or "m1",
+            "course": course, # Salva o curso selecionado como um valor único
             "order": order,
             "users": users or [],
             "start": start,
