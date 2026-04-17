@@ -2,7 +2,6 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 
-# Nova função para gerar as opções de cursos
 def make_course_options(df):
     if "courseid" not in df.columns:
         return []
@@ -35,8 +34,9 @@ def sidebar(df):
                     {"label": "Curso 5282", "value": 5282},
                     {"label": "Curso 1", "value": 1},
                     ],
-                    value=10464,  # Isso garante que ele comece selecionado
-                    clearable=False
+                    value=10464,
+                    clearable=False,
+                    className="full-width-input"
                 ),
 
                 html.Div(style={"height": "14px"}),
@@ -51,6 +51,7 @@ def sidebar(df):
                     ],
                     value="most_sessions",
                     clearable=False,
+                    className="full-width-input"
                 ),
 
                 html.Div(style={"height": "14px"}),
@@ -59,9 +60,10 @@ def sidebar(df):
                 dcc.Dropdown(
                     id="users-select",
                     options=make_user_options(df),
-                    value=None, # <--- Alterado de [] para None
-                    multi=False, # <--- Alterado para False (ou simplesmente apague esta linha)
-                    placeholder="Selecione um aluno", # <--- Ajustado o texto
+                    value=None, 
+                    multi=False, 
+                    placeholder="Selecione um aluno",
+                    className="full-width-input"
                 ),
 
                 html.Div(style={"height": "14px"}),
@@ -73,7 +75,7 @@ def sidebar(df):
                     numberOfColumns=1,              
                     allowSingleDateInRange=True,    
                     allowDeselect=True,             
-                    style={"width": "100%"},
+                    className="full-width-input", 
                     minDate="2014-12-04",
                     maxDate="2017-01-10",
                     defaultDate="2016-08-24",

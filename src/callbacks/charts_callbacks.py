@@ -63,6 +63,6 @@ def register_charts_callbacks(app, _):
     def update_graphs(payload):
         payload = payload or {"sessions": [], "users": [], "start": None, "end": None}
         
-        fig2 = fig_week_bars(payload, height=560)
+        fig2 = fig_week_bars(payload)
 
         return fig2

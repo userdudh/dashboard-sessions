@@ -1,0 +1,159 @@
+/* assets/styles.css */
+
+
+:root {
+    /* Paleta de Cores Principal */
+    --primary-color: #265FA3;
+    --primary-hover: #9DBFE1;
+    --bg-color: #d4e4f2;
+    --card-bg: #FFFFFF;
+    
+    /* Textos e Bordas */
+    --text-main: #1F2937;
+    --text-muted: #6B7280;
+    --border-color: #E5E7EB;
+    
+    /* Fontes */
+    --font-family: 'Verdana', sans-serif;
+}
+/* -------------------------------------- */
+/* Barra de Navegação (Protótipo) */
+/* -------------------------------------- */
+
+.navbar-card .card-body {
+    padding: 0.75rem 1rem !important; /* Deixa o card um pouco mais estreito verticalmente */
+}
+
+.navbar-flex {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* Espaço entre o ícone e as abas */
+}
+
+/* Ícone Quadrado Azul */
+.nav-icon-box {
+    background-color: #6f92ab; /* Azul suave inspirado no protótipo */
+    color: white;
+    width: 42px;
+    height: 42px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-icon-box span {
+    font-size: 28px;
+}
+
+/* Estilização Clean das Abas */
+.custom-tabs {
+    border-bottom: none !important; /* Remove a linha cinza do Bootstrap */
+    gap: 1rem;
+    margin-bottom: 0;
+}
+
+.custom-tabs .nav-link {
+    border: none !important;
+    border-bottom: 2px solid transparent !important; /* Linha invisível para evitar pulos no layout */
+    background-color: transparent !important;
+    color: var(--text-muted) !important;
+    font-weight: 500;
+    padding: 0.5rem 0.5rem;
+    border-radius: 0 !important;
+}
+
+.custom-tabs .nav-link:hover {
+    color: var(--text-main) !important;
+}
+
+/* Estado Ativo (Linha Azul e Negrito) */
+.custom-tabs .nav-link.active {
+    color: var(--text-main) !important;
+    font-weight: 600;
+    border-bottom: 2px solid #265FA3 !important; /* Azul mais forte da linha */
+}
+/* Tipografia e Fundo Global */
+body {
+    background-color: var(--bg-color) !important;
+    font-family: var(--font-family) !important;
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilização dos Cards (Bootstrap) */
+.card {
+    background-color: var(--card-bg) !important;
+    border: none !important;
+    border-radius: 20px !important;
+    box-shadow: 5px 5px 3px rgba(0,0,0,0.04);
+}
+
+/* Abas (Tabs) do Bootstrap */
+.nav-pills .nav-link {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.nav-pills .nav-link.active {
+    background-color: var(--primary-color) !important;
+    color: #FFFFFF !important;
+}
+
+/* -------------------------------------- */
+/* Layout Baseado em vw (Substituindo os styles inline) */
+/* -------------------------------------- */
+
+.dashboard-row {
+    min-height: 40vw;
+}
+
+.sidebar-container {
+    width: 320px !important;
+    flex: 0 0 320px !important;
+    min-height: 40vw !important;
+}
+
+.chart-container {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Força o calendário e selects a ocuparem 100% do container */
+.full-width-input,
+.mantine-DatePicker-root {
+    width: 100% !important;
+}
+
+/* -------------------------------------- */
+/* Customização do Calendário (Mantine) */
+/* -------------------------------------- */
+
+/* 1. Finais de semana: Substitui o vermelho por cinza */
+button[data-weekend], 
+.mantine-DatePicker-day[data-weekend] {
+    color: var(--text-muted) !important; /* Utiliza a variável cinza que já criamos antes */
+}
+
+/* 2. Meio do período: Substitui o fundo azul claro por vermelho claro */
+button[data-in-range],
+.mantine-DatePicker-day[data-in-range] {
+    background-color: #d2e9ff !important; 
+    color: #265FA3 !important;
+}
+
+/* 3. Início e fim do período: Substitui o azul forte por vermelho escuro */
+button[data-selected],
+button[data-first-in-range],
+button[data-last-in-range],
+.mantine-DatePicker-day[data-selected] {
+    background-color: #265FA3 !important; 
+    color: #FFFFFF !important;
+}
+
+/* 4. Efeito Hover (passar o mouse) nas datas selecionadas */
+button[data-selected]:hover,
+button[data-first-in-range]:hover,
+button[data-last-in-range]:hover {
+    background-color: #265FA3 !important;
+}

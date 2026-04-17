@@ -5,7 +5,6 @@ from pathlib import Path
 
 def data_loader(courseid, method_number=1):
     filename = f"metodo{method_number}-curso{courseid}.json"
-    # Adicionado mais um .parent para sair de src/core e chegar na raiz
     relative_path = Path(__file__).parent.parent.parent / "data" / filename 
     
     if not relative_path.exists():
