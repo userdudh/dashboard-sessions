@@ -2,13 +2,9 @@ import pandas as pd
 from dash import Input, Output
 from src.core.session_methods import method_1, method_2
 from src.core.preprocess import get_clean_data
-from src.ui.components.charts import fig_gantt_sessions, fig_week_bars
+from src.ui.components.charts import fig_week_bars
 
 METHODS = {"m1": method_1, "m2": method_2}
-
-MIN_GRAPH1_HEIGHT = 300 
-ROW_HEIGHT = 85
-BASE_HEIGHT = 140
 
 def register_charts_callbacks(app, _): 
     
@@ -20,7 +16,6 @@ def register_charts_callbacks(app, _):
         course_id = filters.get("course", 10464) if filters else 10464
         method_key = filters.get("method", "m1") if filters else "m1"
         method_num = 1 if method_key == "m1" else 2
-
 
         df_clean = get_clean_data(course_id, method_num)
 
@@ -62,23 +57,12 @@ def register_charts_callbacks(app, _):
         }
 
     @app.callback(
-        Output("graph-1", "figure"),
-        Output("graph-1", "style"),
         Output("graph-2", "figure"),
-        Output("graph-2", "style"),
         Input("sessions-store", "data"),
-        Input("chart-tabs", "active_tab"),
     )
-    def update_graphs(payload, active_tab):
+    def update_graphs(payload):
         payload = payload or {"sessions": [], "users": [], "start": None, "end": None}
-        users_display = payload.get("users", []) or []
         
-        fig1 = fig_gantt_sessions(payload)
         fig2 = fig_week_bars(payload, height=560)
 
-        height_g1 = max(MIN_GRAPH1_HEIGHT, BASE_HEIGHT + ROW_HEIGHT * len(users_display))
-
-        style_g1 = {"height": f"{height_g1}px", "display": "block" if active_tab == "g1" else "none"}
-        style_g2 = {"height": "560px", "display": "block" if active_tab == "g2" else "none"}
-
-        return fig1, style_g1, fig2, style_g2
+        return fig2

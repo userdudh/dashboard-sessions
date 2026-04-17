@@ -59,9 +59,9 @@ def sidebar(df):
                 dcc.Dropdown(
                     id="users-select",
                     options=make_user_options(df),
-                    value=[],
-                    multi=True,
-                    placeholder="Selecione alunos",
+                    value=None, # <--- Alterado de [] para None
+                    multi=False, # <--- Alterado para False (ou simplesmente apague esta linha)
+                    placeholder="Selecione um aluno", # <--- Ajustado o texto
                 ),
 
                 html.Div(style={"height": "14px"}),

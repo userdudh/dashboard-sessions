@@ -16,7 +16,6 @@ def create_layout(df):
                             children=[
                                 dbc.Tab(label="Método 1", tab_id="m1"),
                                 dbc.Tab(label="Método 2", tab_id="m2"),
-
                             ],
                         )
                     ),
@@ -29,18 +28,9 @@ def create_layout(df):
                             dbc.Card(
                                 dbc.CardBody(
                                     [
-                                        dbc.Tabs(
-                                            id="chart-tabs",
-                                            active_tab="g1",
-                                            children=[
-                                                dbc.Tab(label="Gráfico 1", tab_id="g1"),
-                                                dbc.Tab(label="Gráfico 2", tab_id="g2"),
-                                            ],
-                                            className="mb-2",
-                                        ),
                                         dcc.Store(id="sessions-store"),
-                                        dcc.Graph(id="graph-1", style={"height": "300px"}),
-                                        dcc.Graph(id="graph-2", style={"display": "none"}),
+                                        # Abas removidas. Apenas o Gráfico 2 permanece com altura fixa.
+                                        dcc.Graph(id="graph-2", style={"height": "560px"}),
                                     ]
                                 )
                             ),

@@ -35,9 +35,9 @@ def register_sidebar_callbacks(app, _):
         trigger = ctx.triggered_id
 
         if trigger == "course-select":
-            new_value = []
+            new_value = None # <--- Alterado de [] para None
         else:
-            new_value = current_selected_users if current_selected_users else []
+            new_value = current_selected_users if current_selected_users else None # <--- Alterado de [] para None
 
         return options, new_value
 
@@ -55,11 +55,14 @@ def register_sidebar_callbacks(app, _):
             start = date_value[0]
             end = date_value[1] or date_value[0]
 
+        # Transforma o valor único do dropdown em uma lista com 1 item (se houver seleção)
+        users_list = [users] if users else []
+
         return {
             "method": method or "m1",
             "course": course if course else 10464,
             "order": order,
-            "users": users or [], 
+            "users": users_list, # <--- Passando a lista criada acima
             "start": start,
             "end": end,
         }
