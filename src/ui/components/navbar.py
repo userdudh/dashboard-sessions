@@ -13,9 +13,6 @@ def render():
                 
                 # Aba 2
                 dbc.NavLink("Método 2", href="#", active=False, id="tab-2", n_clicks=0),
-                
-                # Aba 3
-                dbc.NavLink("Método 3", href="#", active=False, id="tab-3", n_clicks=0),
             ],
             pills=True,     
             fill=True,      

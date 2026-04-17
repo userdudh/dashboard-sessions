@@ -1,47 +1,40 @@
 import pandas as pd
 from dash import Input, Output
-from src.core.session_methods import method_1, method_2, method_3
-
-# Importamos os gráficos do ficheiro de componentes visuais
+from src.core.session_methods import method_1, method_2
+from src.core.load import data_loader
+from src.core.preprocess import preprocess
 from src.ui.components.charts import fig_gantt_sessions, fig_week_bars
 
-METHODS = {"m1": method_1, "m2": method_2, "m3": method_3}
+METHODS = {"m1": method_1, "m2": method_2}
 
-# Alturas e espaçamentos base para o cálculo dinâmico do gráfico 1
 MIN_GRAPH1_HEIGHT = 300 
 ROW_HEIGHT = 85
 BASE_HEIGHT = 140
 
-def register_charts_callbacks(app, dfs):
+def register_charts_callbacks(app, _): 
     
     @app.callback(
         Output("sessions-store", "data"),
         Input("filters-store", "data"),
     )
     def compute_sessions(filters):
-        if not filters:
-            return {"sessions": [], "users": [], "start": None, "end": None}
+        # Inicializa com o curso 10464 se o filtro estiver vazio
+        course_id = filters.get("course", 10464) if filters else 10464
+        method_key = filters.get("method", "m1") if filters else "m1"
+        method_num = 1 if method_key == "m1" else 2
 
-        method_key = filters.get("method", "m1")
-        
-        df_clean = dfs.get(method_key)
+        df_raw = data_loader(course_id, method_num)
+        df_clean = preprocess(df_raw)
 
-        if df_clean is None or df_clean.empty:
+        if df_clean.empty:
             return {"sessions": [], "users": [], "start": None, "end": None}
 
         name_map = df_clean.set_index("username")["display_name"].to_dict()
-        course = filters.get("course") 
-        users = filters.get("users", [])
-        start = filters.get("start")
-        end = filters.get("end")
+        users = filters.get("users", []) if filters else []
+        start = filters.get("start") if filters else None
+        end = filters.get("end") if filters else None
 
         dff = df_clean
-        
-        # 1. Filtro pelo curso selecionado na sidebar
-        if course:
-            dff = dff[dff["courseid"] == course] 
-            
-        # 2. Filtro pelos alunos selecionados
         if users:
             dff = dff[dff["username"].isin(users)]
 
@@ -58,10 +51,7 @@ def register_charts_callbacks(app, dfs):
             sessions["display_name"] = sessions["username"].map(name_map)
             sessions["inicio"] = sessions["inicio"].dt.strftime("%Y-%m-%d %H:%M:%S")
             sessions["fim"] = sessions["fim"].dt.strftime("%Y-%m-%d %H:%M:%S")
-            
-            # Garantir a compatibilidade caso a coluna se chame sessao_id ou session_id
-            if "sessao_id" in sessions.columns and "session_id" not in sessions.columns:
-                sessions["session_id"] = sessions["sessao_id"]
+            sessions["session_id"] = sessions["sessao_id"]
 
         users_display = [name_map.get(u, str(u)) for u in (users or [])]
 
@@ -84,14 +74,11 @@ def register_charts_callbacks(app, dfs):
         payload = payload or {"sessions": [], "users": [], "start": None, "end": None}
         users_display = payload.get("users", []) or []
         
-        # Geramos as figuras usando as funções importadas do charts.py
         fig1 = fig_gantt_sessions(payload)
         fig2 = fig_week_bars(payload, height=560)
 
-        # Calculamos a altura dinâmica do primeiro gráfico consoante o número de alunos
         height_g1 = max(MIN_GRAPH1_HEIGHT, BASE_HEIGHT + ROW_HEIGHT * len(users_display))
 
-        # Estilos para esconder/mostrar as abas dos gráficos
         style_g1 = {"height": f"{height_g1}px", "display": "block" if active_tab == "g1" else "none"}
         style_g2 = {"height": "560px", "display": "block" if active_tab == "g2" else "none"}
 

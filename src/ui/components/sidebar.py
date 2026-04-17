@@ -28,11 +28,15 @@ def sidebar(df):
                 dbc.Label("Curso:"),
                 dcc.Dropdown(
                     id="course-select",
-                    options=make_course_options(df),
-                    value=10464,
-                    multi=False,
-                    placeholder="Selecione um curso",
-                    clearable=False,
+                    options=[
+                    {"label": "Curso 10464", "value": 10464},
+                    {"label": "Curso 8288", "value": 8288},
+                    {"label": "Curso 6744", "value": 6744},
+                    {"label": "Curso 5282", "value": 5282},
+                    {"label": "Curso 1", "value": 1},
+                    ],
+                    value=10464,  # Isso garante que ele comece selecionado
+                    clearable=False
                 ),
 
                 html.Div(style={"height": "14px"}),
