@@ -34,8 +34,6 @@ def register_sidebar_callbacks(app, _):
         
         trigger = ctx.triggered_id
 
-        # REGRA EXATA: Só perde a seleção se mudar O CURSO.
-        # Se mudar método ou ordenação, mantém os usuários que já estavam lá.
         if trigger == "course-select":
             new_value = []
         else:

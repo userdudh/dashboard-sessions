@@ -19,7 +19,13 @@ def preprocess(df):
     connectors = ["de", "da", "do", "dos", "das"]
 
     for u in users:
-        base_seed = int(hashlib.md5(str(u).encode()).hexdigest(), 16) % (2**32)
+        # Recupera o ID do curso associado a esse usuário
+        c_id = df[df["username"] == u]["courseid"].iloc[0] if "courseid" in df.columns else ""
+        
+        # Combina curso e usuário para formar uma seed única
+        seed_string = f"{c_id}_{u}"
+        base_seed = int(hashlib.md5(seed_string.encode()).hexdigest(), 16) % (2**32)
+        
         for i in range(100):
             fake.seed_instance((base_seed + i) % (2**32))
             first, l1, l2 = fake.first_name(), fake.last_name(), fake.last_name()
