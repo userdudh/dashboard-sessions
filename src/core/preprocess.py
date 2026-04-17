@@ -1,6 +1,8 @@
 import pandas as pd
 from faker import Faker
 import hashlib
+from functools import lru_cache
+from src.core.load import data_loader
 
 fake = Faker("pt_BR")
 
@@ -30,3 +32,8 @@ def preprocess(df):
 
     df["display_name"] = df["username"].map(mapping)
     return df
+
+@lru_cache(maxsize=20)
+def get_clean_data(courseid, method_number):
+    df_raw = data_loader(courseid, method_number)
+    return preprocess(df_raw)

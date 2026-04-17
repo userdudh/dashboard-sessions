@@ -1,8 +1,7 @@
 import pandas as pd
 from dash import Input, Output
 from src.core.session_methods import method_1, method_2
-from src.core.load import data_loader
-from src.core.preprocess import preprocess
+from src.core.preprocess import get_clean_data
 from src.ui.components.charts import fig_gantt_sessions, fig_week_bars
 
 METHODS = {"m1": method_1, "m2": method_2}
@@ -18,23 +17,23 @@ def register_charts_callbacks(app, _):
         Input("filters-store", "data"),
     )
     def compute_sessions(filters):
-        # Inicializa com o curso 10464 se o filtro estiver vazio
         course_id = filters.get("course", 10464) if filters else 10464
         method_key = filters.get("method", "m1") if filters else "m1"
         method_num = 1 if method_key == "m1" else 2
 
-        df_raw = data_loader(course_id, method_num)
-        df_clean = preprocess(df_raw)
+
+        df_clean = get_clean_data(course_id, method_num)
 
         if df_clean.empty:
             return {"sessions": [], "users": [], "start": None, "end": None}
 
-        name_map = df_clean.set_index("username")["display_name"].to_dict()
+        dff = df_clean.copy()
+
+        name_map = dff.set_index("username")["display_name"].to_dict()
         users = filters.get("users", []) if filters else []
         start = filters.get("start") if filters else None
         end = filters.get("end") if filters else None
 
-        dff = df_clean
         if users:
             dff = dff[dff["username"].isin(users)]
 

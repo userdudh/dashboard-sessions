@@ -1,7 +1,6 @@
-from dash import Input, Output, State, no_update
+from dash import Input, Output, State, ctx
 import pandas as pd
-from src.core.load import data_loader
-from src.core.preprocess import preprocess
+from src.core.preprocess import get_clean_data
 
 def register_sidebar_callbacks(app, _):
 
@@ -11,25 +10,19 @@ def register_sidebar_callbacks(app, _):
         [Input("course-select", "value"),
          Input("order-select", "value"),
          Input("method-tabs", "active_tab")],
-        [State("users-select", "value"), # Captura o estado atual dos usuários selecionados
-         State("course-select", "value")] # Para comparar se o curso realmente mudou
+        [State("users-select", "value")] 
     )
-    def update_sidebar(course, order_value, active_method, current_selected_users, last_course):
-        # Define o curso atual
+    def update_sidebar(course, order_value, active_method, current_selected_users):
         current_course = course if course else 10464
         method_num = 2 if active_method == "m2" else 1
         
-        # Carrega os dados do curso/método
-        df_raw = data_loader(current_course, method_num)
-        df_current = preprocess(df_raw)
+        df_current = get_clean_data(current_course, method_num)
         
         if df_current.empty:
             return [], []
 
-        # Prepara as opções do Dropdown
         base = df_current[["username", "display_name"]].drop_duplicates().copy()
         
-        # Ordenação
         if order_value == "most_sessions":
             counts = df_current["username"].value_counts()
             base["count"] = base["username"].map(counts)
@@ -39,13 +32,14 @@ def register_sidebar_callbacks(app, _):
 
         options = [{"label": r["display_name"], "value": r["username"]} for _, r in ordered.iterrows()]
         
-        # LÓGICA DE PERSISTÊNCIA:
-        # Se o curso for o mesmo de antes, mantemos os usuários selecionados
-        # Se o curso mudou, limpamos a seleção (pois são outros alunos)
-        if course == last_course:
-            new_value = current_selected_users if current_selected_users else []
-        else:
+        trigger = ctx.triggered_id
+
+        # REGRA EXATA: Só perde a seleção se mudar O CURSO.
+        # Se mudar método ou ordenação, mantém os usuários que já estavam lá.
+        if trigger == "course-select":
             new_value = []
+        else:
+            new_value = current_selected_users if current_selected_users else []
 
         return options, new_value
 
@@ -67,7 +61,7 @@ def register_sidebar_callbacks(app, _):
             "method": method or "m1",
             "course": course if course else 10464,
             "order": order,
-            "users": users or [], # Lista vazia se nada for selecionado
+            "users": users or [], 
             "start": start,
             "end": end,
         }

@@ -16,6 +16,7 @@ def create_layout(df):
                             children=[
                                 dbc.Tab(label="Método 1", tab_id="m1"),
                                 dbc.Tab(label="Método 2", tab_id="m2"),
+
                             ],
                         )
                     ),
