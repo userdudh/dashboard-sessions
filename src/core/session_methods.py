@@ -17,4 +17,3 @@ def _aggregate_sessions(df):
 
 def method_1(df): return _aggregate_sessions(df)
 def method_2(df): return _aggregate_sessions(df)
-def method_3(df): return _aggregate_sessions(df)

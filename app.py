@@ -1,22 +1,27 @@
 import dash
 import dash_bootstrap_components as dbc
-
-from src.core.load import data_loader
-from src.core.preprocess import preprocess
+from src.core.preprocess import get_clean_data 
 from src.ui.layout import create_layout
 from src.callbacks.register import register_callbacks
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
+external_stylesheets = [
+    dbc.themes.BOOTSTRAP,
+    "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=insert_chart"
+]
+
+app = dash.Dash(
+    __name__, 
+    external_stylesheets=external_stylesheets, 
+    suppress_callback_exceptions=True
+)
+
 server = app.server
 
-dfs = {
-    "m1": preprocess(data_loader(1)),
-    "m2": preprocess(data_loader(2)),
-    "m3": preprocess(data_loader(3))
-}
+df_inicial = get_clean_data(10464, 1)
 
-app.layout = create_layout(dfs["m1"])
-register_callbacks(app, dfs)
+app.layout = create_layout(df_inicial)
+
+register_callbacks(app, None)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

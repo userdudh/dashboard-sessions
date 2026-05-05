@@ -2,7 +2,6 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 
-# Nova função para gerar as opções de cursos
 def make_course_options(df):
     if "courseid" not in df.columns:
         return []
@@ -28,25 +27,35 @@ def sidebar(df):
                 dbc.Label("Curso:"),
                 dcc.Dropdown(
                     id="course-select",
-                    options=make_course_options(df),
+                    options=[
+                    {"label": "Curso 10464", "value": 10464},
+                    {"label": "Curso 8288", "value": 8288},
+                    {"label": "Curso 6744", "value": 6744},
+                    {"label": "Curso 5282", "value": 5282},
+                    {"label": "Curso 1", "value": 1},
+                    ],
                     value=10464,
-                    multi=False,
-                    placeholder="Selecione um curso",
                     clearable=False,
+                    className="full-width-input"
                 ),
 
-                html.Div(style={"height": "14px"}),
-
-                dbc.Label("Ordenar alunos:"),
-                dcc.Dropdown(
-                    id="order-select",
-                    options=[
-                        {"label": "Mais sessões", "value": "most_sessions"},
-                        {"label": "Menos sessões", "value": "least_sessions"},
-                        {"label": "A–Z", "value": "az"},
-                    ],
-                    value="most_sessions",
-                    clearable=False,
+html.Div(
+                    id="order-container",
+                    children=[
+                        dbc.Label("Ordenar alunos:"),
+                        dcc.Dropdown(
+                            id="order-select",
+                            options=[
+                                {"label": "Mais sessões", "value": "most_sessions"},
+                                {"label": "Menos sessões", "value": "least_sessions"},
+                                {"label": "A–Z", "value": "az"},
+                            ],
+                            value="most_sessions",
+                            clearable=False,
+                            className="full-width-input"
+                        ),
+                        html.Div(style={"height": "14px"}),
+                    ]
                 ),
 
                 html.Div(style={"height": "14px"}),
@@ -55,9 +64,10 @@ def sidebar(df):
                 dcc.Dropdown(
                     id="users-select",
                     options=make_user_options(df),
-                    value=[],
-                    multi=True,
-                    placeholder="Selecione alunos",
+                    value=None, 
+                    multi=False, 
+                    placeholder="Selecione um aluno",
+                    className="full-width-input"
                 ),
 
                 html.Div(style={"height": "14px"}),
@@ -69,7 +79,7 @@ def sidebar(df):
                     numberOfColumns=1,              
                     allowSingleDateInRange=True,    
                     allowDeselect=True,             
-                    style={"width": "100%"},
+                    className="full-width-input", 
                     minDate="2014-12-04",
                     maxDate="2017-01-10",
                     defaultDate="2016-08-24",
