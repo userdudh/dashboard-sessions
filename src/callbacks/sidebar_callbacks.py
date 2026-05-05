@@ -1,18 +1,45 @@
 from dash import Input, Output, State, ctx
+import dash
 import pandas as pd
-from src.core.preprocess import get_clean_data
+from src.core.preprocess import get_clean_data, TEST_NAME_M1, TEST_NAME_M2
 
 def register_sidebar_callbacks(app, _):
+
+    @app.callback(
+        [Output("navbar-container", "style"),
+         Output("order-container", "style"),
+         Output("course-select", "disabled")],
+        Input("app-mode-switch", "value")
+    )
+    def toggle_mode_ui(mode):
+        if mode == "test":
+            return {"display": "none"}, {"display": "none"}, True
+        return {"display": "block"}, {"display": "block"}, False
 
     @app.callback(
         [Output("users-select", "options"),
          Output("users-select", "value")],
         [Input("course-select", "value"),
          Input("order-select", "value"),
-         Input("method-tabs", "active_tab")],
+         Input("method-tabs", "active_tab"),
+         Input("app-mode-switch", "value")],
         [State("users-select", "value")] 
     )
-    def update_sidebar(course, order_value, active_method, current_selected_users):
+    def update_sidebar(course, order_value, active_method, mode, current_selected_users):
+
+        if mode == "test":
+            options = [
+                {"label": TEST_NAME_M1, "value": "test_m1"},
+                {"label": TEST_NAME_M2, "value": "test_m2"}
+            ]
+            
+            trigger = ctx.triggered_id
+
+            if trigger == "app-mode-switch":
+                return options, None
+                
+            return options, current_selected_users
+
         current_course = course if course else 10464
         method_num = 2 if active_method == "m2" else 1
         
@@ -33,8 +60,7 @@ def register_sidebar_callbacks(app, _):
         options = [{"label": r["display_name"], "value": r["username"]} for _, r in ordered.iterrows()]
         
         trigger = ctx.triggered_id
-
-        if trigger == "course-select":
+        if trigger == "course-select" or trigger == "app-mode-switch":
             new_value = None 
         else:
             new_value = current_selected_users if current_selected_users else None

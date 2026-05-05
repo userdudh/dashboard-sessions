@@ -39,19 +39,23 @@ def sidebar(df):
                     className="full-width-input"
                 ),
 
-                html.Div(style={"height": "14px"}),
-
-                dbc.Label("Ordenar alunos:"),
-                dcc.Dropdown(
-                    id="order-select",
-                    options=[
-                        {"label": "Mais sessões", "value": "most_sessions"},
-                        {"label": "Menos sessões", "value": "least_sessions"},
-                        {"label": "A–Z", "value": "az"},
-                    ],
-                    value="most_sessions",
-                    clearable=False,
-                    className="full-width-input"
+html.Div(
+                    id="order-container",
+                    children=[
+                        dbc.Label("Ordenar alunos:"),
+                        dcc.Dropdown(
+                            id="order-select",
+                            options=[
+                                {"label": "Mais sessões", "value": "most_sessions"},
+                                {"label": "Menos sessões", "value": "least_sessions"},
+                                {"label": "A–Z", "value": "az"},
+                            ],
+                            value="most_sessions",
+                            clearable=False,
+                            className="full-width-input"
+                        ),
+                        html.Div(style={"height": "14px"}),
+                    ]
                 ),
 
                 html.Div(style={"height": "14px"}),

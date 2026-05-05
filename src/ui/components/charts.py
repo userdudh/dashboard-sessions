@@ -80,7 +80,7 @@ def fig_week_bars(payload, height=520):
     fig.update_xaxes(
         range=[0, 24 * 60],
         tickvals=list(range(0, 24 * 60, 60)),
-        ticktext=[f"{h:02d}:00" for h in range(24)],
+        ticktext=[f"{h:02d}h" for h in range(24)],
         title="Hora do Dia",
         gridcolor="#E5E7EB"
     )

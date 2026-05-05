@@ -71,7 +71,7 @@
 .custom-tabs .nav-link.active {
     color: var(--text-main) !important;
     font-weight: 600;
-    border-bottom: 2px solid #265FA3 !important; /* Azul mais forte da linha */
+    border-bottom: 2px solid #265fa3 !important; /* Azul mais forte da linha */
 }
 /* Tipografia e Fundo Global */
 body {
@@ -155,5 +155,22 @@ button[data-last-in-range],
 button[data-selected]:hover,
 button[data-first-in-range]:hover,
 button[data-last-in-range]:hover {
-    background-color: #265FA3 !important;
+    background-color: #265fa3 !important;
+}
+
+.mode-switch input[type="radio"] {
+    accent-color: #265fa3;
+}
+
+.mode-switch label {
+    color: #1f2937 !important;
+    cursor: pointer;
+}
+
+.mode-switch label:hover {
+    color: #265fa3 !important;
+}
+
+.mode-switch label:has(input[type="radio"]:checked) {
+    color: #265fa3 !important;
 }

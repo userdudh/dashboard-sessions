@@ -8,28 +8,51 @@ def create_layout(df):
         children=dbc.Container(
             fluid=True,
             children=[
-                dbc.Card(
-                    dbc.CardBody(
-                        html.Div(
-                            className="navbar-flex",
-                            children=[
+                html.Div(
+                    dcc.RadioItems(
+                        id="app-mode-switch",
+                        className="mode-switch",
+                        options=[
+                            {"label": "Logs internos ", "value": "full"},
+                            {"label": "Modo Teste", "value": "test"}
+                        ],
+                        value="test",
+                        inline=True,
+                        inputStyle={
+                        "accentColor": "#265fa3",
+                        "marginRight": "6px"},
+                        labelStyle={
+                            "marginRight": "16px"},
+                        style={"paddingLeft": "10px", "textAlign": "left", "backgroundColor": "#f8f9fa", "marginBottom": "10px", "borderRadius": "8px"}
+                    )
+                ),
+                html.Div(
+                    id="navbar-container",
+                    children=[
+                        dbc.Card(
+                            dbc.CardBody(
                                 html.Div(
-                                    html.Span("insert_chart", className="material-symbols-outlined"),
-                                    className="nav-icon-box"
-                                ),
-                                dbc.Tabs(
-                                    id="method-tabs",
-                                    active_tab="m1",
-                                    className="custom-tabs",
+                                    className="navbar-flex",
                                     children=[
-                                        dbc.Tab(label="Método 1", tab_id="m1"),
-                                        dbc.Tab(label="Método 2", tab_id="m2"),
-                                    ],
+                                        html.Div(
+                                            html.Span("insert_chart", className="material-symbols-outlined"),
+                                            className="nav-icon-box"
+                                        ),
+                                        dbc.Tabs(
+                                            id="method-tabs",
+                                            active_tab="m1",
+                                            className="custom-tabs",
+                                            children=[
+                                                dbc.Tab(label="Método 1", tab_id="m1"),
+                                                dbc.Tab(label="Método 2", tab_id="m2"),
+                                            ],
+                                        )
+                                    ]
                                 )
-                            ]
-                        )
-                    ),
-                    className="mb-3 navbar-card",
+                            ),
+                            className="mb-3 navbar-card",
+                        ),
+                    ]
                 ),
                 dbc.Row(
                     [
