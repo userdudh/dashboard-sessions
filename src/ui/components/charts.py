@@ -16,7 +16,7 @@ def fig_week_bars(payload, height=520):
     end = payload.get("end")
 
     if not start or not end or not users_display or len(users_display) != 1:
-        return _empty_fig("Selecione exatamente 1 aluno no calendário", height=height)
+        return _empty_fig("Selecione 1 aluno e um periodo no calendário", height=height)
 
     aluno = users_display[0]
     

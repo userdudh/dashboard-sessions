@@ -35,7 +35,11 @@ def data_loader(courseid, method_number=1):
         
         df = pd.DataFrame(flat_data)
         if not df.empty and "datetime" in df.columns:
-            df["datetime"] = pd.to_datetime(df["datetime"], unit='s')
+            df["datetime"] = (
+                pd.to_datetime(df["datetime"], unit="s", utc=True)
+                .dt.tz_convert("America/Recife")
+                .dt.tz_localize(None)
+            )
             
         return df
 

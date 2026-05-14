@@ -1,70 +1,69 @@
 import pandas as pd
 from dash import Input, Output
+
 from src.core.session_methods import method_1, method_2
-from src.core.preprocess import get_clean_data, TARGET_TEST_USER, TARGET_TEST_COURSE, TEST_NAME_M1, TEST_NAME_M2
+from src.core.preprocess import get_clean_data
+from src.core.modetests import (
+    SPECIAL_MODES,
+    get_special_mode_sessions,
+    get_label_by_value,
+)
 from src.ui.components.charts import fig_week_bars
 
-METHODS = {"m1": method_1, "m2": method_2}
 
-def register_charts_callbacks(app, _): 
-    
+METHODS = {
+    "m1": method_1,
+    "m2": method_2,
+}
+
+
+def register_charts_callbacks(app, _):
+
     @app.callback(
         Output("sessions-store", "data"),
-        [Input("filters-store", "data"),
-         Input("app-mode-switch", "value")],
+        [
+            Input("filters-store", "data"),
+            Input("app-mode-switch", "value"),
+        ],
     )
     def compute_sessions(filters, mode):
 
-        if mode == "test":
+        if mode in SPECIAL_MODES:
             start = filters.get("start") if filters else None
             end = filters.get("end") if filters else None
             users = filters.get("users", []) if filters else []
-            
-            df_m1_raw = get_clean_data(TARGET_TEST_COURSE, 1)
-            df_m1 = df_m1_raw[df_m1_raw["username"] == TARGET_TEST_USER].copy()
-            sess_m1 = method_1(df_m1) if not df_m1.empty else pd.DataFrame()
-            
-            if not sess_m1.empty:
-                sess_m1["username"] = "test_m1"
-                sess_m1["display_name"] = TEST_NAME_M1
 
-            df_m2_raw = get_clean_data(TARGET_TEST_COURSE, 2)
-            df_m2 = df_m2_raw[df_m2_raw["username"] == TARGET_TEST_USER].copy()
-            sess_m2 = method_2(df_m2) if not df_m2.empty else pd.DataFrame()
-
-            if not sess_m2.empty:
-                sess_m2["username"] = "test_m2"
-                sess_m2["display_name"] = TEST_NAME_M2
-
-            if sess_m1.empty and sess_m2.empty:
-                sessions = pd.DataFrame()
-            else:
-                sessions = pd.concat([sess_m1, sess_m2], ignore_index=True)
-
-            if not sessions.empty and start and end:
-                start_dt = pd.to_datetime(start)
-                end_dt = pd.to_datetime(end) + pd.Timedelta(days=1)
-                sessions = sessions[(sessions["fim"] >= start_dt) & (sessions["inicio"] < end_dt)]
+            sessions = get_special_mode_sessions(mode, course_id=10464).copy()
 
             if not sessions.empty and users:
                 sessions = sessions[sessions["username"].isin(users)]
 
-            if not sessions.empty:
-                sessions = sessions.copy()
-                sessions["inicio"] = sessions["inicio"].dt.strftime("%Y-%m-%d %H:%M:%S")
-                sessions["fim"] = sessions["fim"].dt.strftime("%Y-%m-%d %H:%M:%S")
-                sessions["session_id"] = sessions["sessao_id"]
+            if not sessions.empty and start and end:
+                start_dt = pd.to_datetime(start)
+                end_dt = pd.to_datetime(end) + pd.Timedelta(days=1)
 
-            users_display = [TEST_NAME_M1, TEST_NAME_M2]
-            if users:
-                users_display = []
-                for u in users:
-                    if u == "test_m1":
-                        users_display.append(TEST_NAME_M1)
-                    elif u == "test_m2":
-                        users_display.append(TEST_NAME_M2)
-                    else:
-                        users_display.append(str(u))
+                sessions = sessions[
+                    (sessions["fim"] >= start_dt)
+                    & (sessions["inicio"] < end_dt)
+                ]
+
+            label_by_value = get_label_by_value(mode)
+
+            users_display = [
+                label_by_value[user]
+                for user in users
+                if user in label_by_value
+            ]
+
+            if not sessions.empty:
+                sessions["inicio"] = (
+                    pd.to_datetime(sessions["inicio"], errors="coerce")
+                    .dt.strftime("%Y-%m-%d %H:%M:%S")
+                )
+                sessions["fim"] = (
+                    pd.to_datetime(sessions["fim"], errors="coerce")
+                    .dt.strftime("%Y-%m-%d %H:%M:%S")
+                )
 
             return {
                 "sessions": sessions.to_dict("records") if not sessions.empty else [],
@@ -80,11 +79,17 @@ def register_charts_callbacks(app, _):
         df_clean = get_clean_data(course_id, method_num)
 
         if df_clean.empty:
-            return {"sessions": [], "users": [], "start": None, "end": None}
+            return {
+                "sessions": [],
+                "users": [],
+                "start": None,
+                "end": None,
+            }
 
         dff = df_clean.copy()
 
         name_map = dff.set_index("username")["display_name"].to_dict()
+
         users = filters.get("users", []) if filters else []
         start = filters.get("start") if filters else None
         end = filters.get("end") if filters else None
@@ -98,7 +103,11 @@ def register_charts_callbacks(app, _):
         if not sessions.empty and start and end:
             start_dt = pd.to_datetime(start)
             end_dt = pd.to_datetime(end) + pd.Timedelta(days=1)
-            sessions = sessions[(sessions["fim"] >= start_dt) & (sessions["inicio"] < end_dt)]
+
+            sessions = sessions[
+                (sessions["fim"] >= start_dt)
+                & (sessions["inicio"] < end_dt)
+            ]
 
         if not sessions.empty:
             sessions = sessions.copy()
@@ -107,7 +116,10 @@ def register_charts_callbacks(app, _):
             sessions["fim"] = sessions["fim"].dt.strftime("%Y-%m-%d %H:%M:%S")
             sessions["session_id"] = sessions["sessao_id"]
 
-        users_display = [name_map.get(u, str(u)) for u in (users or [])]
+        users_display = [
+            name_map.get(user, str(user))
+            for user in users
+        ]
 
         return {
             "sessions": sessions.to_dict("records") if not sessions.empty else [],
@@ -121,6 +133,11 @@ def register_charts_callbacks(app, _):
         Input("sessions-store", "data"),
     )
     def update_graphs(payload):
-        payload = payload or {"sessions": [], "users": [], "start": None, "end": None}
-        fig2 = fig_week_bars(payload)
-        return fig2
+        payload = payload or {
+            "sessions": [],
+            "users": [],
+            "start": None,
+            "end": None,
+        }
+
+        return fig_week_bars(payload)
