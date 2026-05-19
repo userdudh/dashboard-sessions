@@ -24,7 +24,7 @@ def fig_week_bars(payload, height=520):
     end_dt = pd.to_datetime(end).normalize()
     full_date_range = pd.date_range(start=start_dt, end=end_dt, freq='D')
     
-    dynamic_height = max(len(full_date_range) * 100 + 50, 300)
+    dynamic_height = max(len(full_date_range) * 70 + 50, 300)
 
     fig = go.Figure()
 
@@ -48,19 +48,26 @@ def fig_week_bars(payload, height=520):
             sessions["start_min"] = sessions["inicio"].dt.hour * 60 + sessions["inicio"].dt.minute + sessions["inicio"].dt.second / 60.0
             sessions["dur_min"] = (sessions["fim_plot"] - sessions["inicio"]).dt.total_seconds() / 60.0
             
-            id_col = "session_id" if "session_id" in sessions.columns else "sessao_id"
-            sessions["session_label"] = sessions[id_col].apply(lambda x: f"Sessão {int(x)}")
-
+            sessions["hora_inicio"] = sessions["inicio"].dt.strftime("%H:%M:%S")
+            sessions["hora_fim"] = sessions["fim"].dt.strftime("%H:%M:%S")
+            
+            def formata_duracao(td):
+                ts = int(td.total_seconds())
+                h, r = divmod(ts, 3600)
+                m, s = divmod(r, 60)
+                return f"{h:02d}:{m:02d}:{s:02d}"
+                
+            sessions["dur_str"] = (sessions["fim"] - sessions["inicio"]).apply(formata_duracao)
 
             fig.add_trace(go.Bar(
                 y=sessions["dia"],               
                 x=sessions["dur_min"],           
                 base=sessions["start_min"],      
                 orientation='h',                 
-                width=0.85 * 24 * 60 * 60 * 1000,
+                width=0.75 * 24 * 60 * 60 * 1000,
                 marker=dict(color="#265FA3"),
-                hovertemplate=f"<b>{aluno}</b><br>%{{customdata[0]}}<br>Início: %{{customdata[1]}}<br>Fim: %{{customdata[2]}}<extra></extra>",
-                customdata=sessions[["session_label", "inicio", "fim"]].astype(str).to_numpy(),
+                hovertemplate=f"<b>{aluno}</b><br>Período: %{{customdata[0]}} - %{{customdata[1]}}<br>Duração: %{{customdata[2]}}<extra></extra>",
+                customdata=sessions[["hora_inicio", "hora_fim", "dur_str"]].to_numpy(),
             ))
 
 
