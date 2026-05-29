@@ -10,12 +10,10 @@ from src.core.modetests import (
 )
 from src.ui.components.charts import fig_week_bars
 
-
 METHODS = {
     "m1": method_1,
     "m2": method_2,
 }
-
 
 def register_charts_callbacks(app, _):
 
@@ -27,18 +25,25 @@ def register_charts_callbacks(app, _):
         ],
     )
     def compute_sessions(filters, mode):
+        start = filters.get("start") if filters else None
+        end = filters.get("end") if filters else None
+        users = filters.get("users", []) if filters else []
+
+        if not start or not end or len(users) != 1:
+            return {
+                "sessions": [],
+                "users": [],
+                "start": start,
+                "end": end,
+            }
 
         if mode in SPECIAL_MODES:
-            start = filters.get("start") if filters else None
-            end = filters.get("end") if filters else None
-            users = filters.get("users", []) if filters else []
-
             sessions = get_special_mode_sessions(mode, course_id=2060).copy()
 
-            if not sessions.empty and users:
+            if not sessions.empty:
                 sessions = sessions[sessions["username"].isin(users)]
 
-            if not sessions.empty and start and end:
+            if not sessions.empty:
                 start_dt = pd.to_datetime(start)
                 end_dt = pd.to_datetime(end) + pd.Timedelta(days=1)
 
@@ -82,32 +87,39 @@ def register_charts_callbacks(app, _):
             return {
                 "sessions": [],
                 "users": [],
-                "start": None,
-                "end": None,
+                "start": start,
+                "end": end,
             }
 
         dff = df_clean.copy()
 
         name_map = dff.set_index("username")["display_name"].to_dict()
 
-        users = filters.get("users", []) if filters else []
-        start = filters.get("start") if filters else None
-        end = filters.get("end") if filters else None
+        dff = dff[dff["username"].isin(users)]
 
-        if users:
-            dff = dff[dff["username"].isin(users)]
+        start_dt = pd.to_datetime(start)
+        end_dt = pd.to_datetime(end) + pd.Timedelta(days=1)
+
+        dff = dff[
+            (dff["datetime"] >= start_dt)
+            & (dff["datetime"] < end_dt)
+        ]
+
+        if dff.empty:
+            users_display = [
+                name_map.get(user, str(user))
+                for user in users
+            ]
+
+            return {
+                "sessions": [],
+                "users": users_display,
+                "start": start,
+                "end": end,
+            }
 
         fn = METHODS.get(method_key, method_1)
         sessions = fn(dff)
-
-        if not sessions.empty and start and end:
-            start_dt = pd.to_datetime(start)
-            end_dt = pd.to_datetime(end) + pd.Timedelta(days=1)
-
-            sessions = sessions[
-                (sessions["fim"] >= start_dt)
-                & (sessions["inicio"] < end_dt)
-            ]
 
         if not sessions.empty:
             sessions = sessions.copy()

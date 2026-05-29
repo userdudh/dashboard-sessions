@@ -195,6 +195,41 @@ def get_special_mode_sessions(mode, course_id=2060):
     if df.empty:
         return pd.DataFrame()
 
+    EVENTOS_TRADUZIDOS = {
+        "course_vis": "Acessou a disciplina",
+        "assignment_vis": "Visualizou atividade",
+        "forum_vis": "Acessou o fórum",
+        "resource_vis": "Acessou o material",
+        "assignment_try": "Iniciou atividade",
+        "assignment_sub": "Submeteu atividade",
+        "forum_participation": "Postou no fórum",
+        "message_read": "Leu mensagem",
+        "message_sent": "Enviou mensagem",
+    }
+
+    def make_event_summary(series):
+        eventos = (
+            series
+            .fillna("")
+            .astype(str)
+            .str.strip()
+        )
+
+        eventos = eventos[
+            (eventos != "")
+            & (eventos != "course_vis")
+        ]
+
+        if eventos.empty:
+            return "Apenas eventos de acesso a disciplina nesta sessão"
+
+        counts = eventos.value_counts()
+
+        return "<br>".join(
+            f"{EVENTOS_TRADUZIDOS.get(cls, cls)}: {count}"
+            for cls, count in counts.items()
+        )
+
     sessions = (
         df.groupby(
             ["username", "display_name", "metodo", "sessao_id"],
@@ -204,6 +239,7 @@ def get_special_mode_sessions(mode, course_id=2060):
             inicio=("datetime", "min"),
             fim=("datetime", "max"),
             eventos=("datetime", "count"),
+            eventos_resumo=("class", make_event_summary),
         )
     )
 

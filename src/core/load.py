@@ -15,8 +15,6 @@ def data_loader(courseid, method_number=1):
         with open(relative_path, "r", encoding="utf-8") as f:
             dados = json.load(f)
 
-        # O seu JSON vem assim: [ { courseid, users } ]
-        # Então precisamos pegar o primeiro item da lista.
         if isinstance(dados, list):
             if not dados:
                 return pd.DataFrame()
