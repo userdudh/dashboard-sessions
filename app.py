@@ -27,7 +27,7 @@ app = dash.Dash(
 
 server = app.server
 
-df_inicial = get_clean_data(10464, 1)
+df_inicial = get_clean_data(2060, 1)
 
 app.layout = create_layout(df_inicial)
 

@@ -95,7 +95,7 @@ def register_sidebar_callbacks(app, _):
 
             return options, selected
 
-        current_course = course if course else 10464
+        current_course = course if course else 2060
         method_num = 2 if active_method == "m2" else 1
 
         df_current = get_clean_data(current_course, method_num)
@@ -159,7 +159,7 @@ def register_sidebar_callbacks(app, _):
 
         return {
             "method": method or "m1",
-            "course": course if course else 10464,
+            "course": course if course else 2060,
             "order": order,
             "users": users_list,
             "start": start,

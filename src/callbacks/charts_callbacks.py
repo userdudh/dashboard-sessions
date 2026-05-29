@@ -33,7 +33,7 @@ def register_charts_callbacks(app, _):
             end = filters.get("end") if filters else None
             users = filters.get("users", []) if filters else []
 
-            sessions = get_special_mode_sessions(mode, course_id=10464).copy()
+            sessions = get_special_mode_sessions(mode, course_id=2060).copy()
 
             if not sessions.empty and users:
                 sessions = sessions[sessions["username"].isin(users)]
@@ -72,7 +72,7 @@ def register_charts_callbacks(app, _):
                 "end": end,
             }
 
-        course_id = filters.get("course", 10464) if filters else 10464
+        course_id = filters.get("course", 2060) if filters else 2060
         method_key = filters.get("method", "m1") if filters else "m1"
         method_num = 1 if method_key == "m1" else 2
 

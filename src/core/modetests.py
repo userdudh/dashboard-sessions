@@ -1,62 +1,60 @@
 import json
 from pathlib import Path
 from functools import lru_cache
-
 import pandas as pd
-
 
 MODE_PROFILES = {
     "test": [
         {
             "label": "Cauã Nogueira",
-            "username_original": "user6442803380426375169",
+            "username_original": "124387",
             "metodo": 1,
-            "value": "user6442803380426375169_m1",
+            "value": "124387_m1",
         },
         {
             "label": "Marcos Vinícius",
-            "username_original": "user2959087468848087041",
+            "username_original": "55760",
             "metodo": 1,
-            "value": "user2959087468848087041_m1",
+            "value": "55760_m1",
         },
         {
             "label": "Isadora Machado",
-            "username_original": "user6442803380426375169",
+            "username_original": "124387",
             "metodo": 2,
-            "value": "user6442803380426375169_m2",
+            "value": "124387_m2",
         },
         {
             "label": "Mirella Peixoto",
-            "username_original": "user2959087468848087041",
+            "username_original": "55760",
             "metodo": 2,
-            "value": "user2959087468848087041_m2",
+            "value": "55760_m2",
         },
     ],
 
     "train": [
         {
             "label": "Juliana Meireles",
-            "username_original": "user1002410981378228225",
+            "username_original": "137654",
             "metodo": 1,
-            "value": "user1002410981378228225_m1",
+            "value": "137654_m1",
         },
         {
             "label": "Beatriz Lemos",
-            "username_original": "user4549114572627247105",
+            "username_original": "122377",
             "metodo": 1,
-            "value": "user4549114572627247105_m1",
+            "value": "122377_m1",
         },
         {
             "label": "Camila Viana",
-            "username_original": "user1002410981378228225",
+            "username_original": "137654",
             "metodo": 2,
-            "value": "user1002410981378228225_m2",
+            "value": "137654_m2",
         },
         {
             "label": "Breno Assunção",
-            "username_original": "user4549114572627247105",
+            "username_original": "122377",
             "metodo": 2,
-            "value": "user4549114572627247105_m2",
+            "value": "122377_m2",
         },
     ],
 }
@@ -125,12 +123,19 @@ def _load_only_mode_users(mode, course_id, method_number):
     rows = []
 
     with open(path, "r", encoding="utf-8") as file:
-        course = json.load(file)
+        dados = json.load(file)
+        
+    if isinstance(dados, list):
+        if not dados:
+            return pd.DataFrame()
+        course = dados[0]
+    else:
+        course = dados
 
     course_id_real = course.get("courseid")
 
     for user in course.get("users", []):
-        username_original = str(user.get("username"))
+        username_original = str(user.get("userid"))
 
         if username_original not in profiles_this_method:
             continue
@@ -149,10 +154,9 @@ def _load_only_mode_users(mode, course_id, method_number):
                         "display_name": profile["label"],
                         "metodo": method_number,
                         "sessao_id": sessao_id,
-                        "eventname": event.get("eventname"),
                         "class": event.get("class"),
-                        "timecreated": event.get("timecreated"),
-                        "datetime": event.get("timecreated"),
+                        "timecreated": event.get("t"),
+                        "datetime": event.get("t"),
                     }
                 )
 
@@ -169,7 +173,7 @@ def _load_only_mode_users(mode, course_id, method_number):
 
 
 @lru_cache(maxsize=10)
-def get_special_mode_data(mode, course_id=10464):
+def get_special_mode_data(mode, course_id=2060):
     frames = []
 
     for method_number in [1, 2]:
@@ -185,7 +189,7 @@ def get_special_mode_data(mode, course_id=10464):
 
 
 @lru_cache(maxsize=10)
-def get_special_mode_sessions(mode, course_id=10464):
+def get_special_mode_sessions(mode, course_id=2060):
     df = get_special_mode_data(mode, course_id)
 
     if df.empty:
@@ -208,17 +212,17 @@ def get_special_mode_sessions(mode, course_id=10464):
     return sessions
 
 
-def get_test_mode_data(course_id=10464):
+def get_test_mode_data(course_id=2060):
     return get_special_mode_data("test", course_id)
 
 
-def get_test_sessions(course_id=10464):
+def get_test_sessions(course_id=2060):
     return get_special_mode_sessions("test", course_id)
 
 
-def get_train_mode_data(course_id=10464):
+def get_train_mode_data(course_id=2060):
     return get_special_mode_data("train", course_id)
 
 
-def get_train_sessions(course_id=10464):
+def get_train_sessions(course_id=2060):
     return get_special_mode_sessions("train", course_id)

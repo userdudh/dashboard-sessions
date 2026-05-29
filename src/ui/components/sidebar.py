@@ -2,6 +2,23 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 import dash_mantine_components as dmc
 
+def make_user_options(df):
+    if df.empty or "username" not in df.columns:
+        return []
+
+    users_df = (
+        df[["username", "display_name"]]
+        .drop_duplicates()
+        .sort_values("display_name")
+    )
+
+    return [
+        {
+            "label": row["display_name"],
+            "value": row["username"],
+        }
+        for _, row in users_df.iterrows()
+    ]
 
 def make_course_options(df):
     if "courseid" not in df.columns:
@@ -39,13 +56,9 @@ def sidebar(df):
                 dcc.Dropdown(
                     id="course-select",
                     options=[
-                        {"label": "Curso 10464", "value": 10464},
-                        {"label": "Curso 8288", "value": 8288},
-                        {"label": "Curso 6744", "value": 6744},
-                        {"label": "Curso 5282", "value": 5282},
-                        {"label": "Curso 1", "value": 1},
+                        {"label": "Curso 2060", "value": 2060},
                     ],
-                    value=10464,
+                    value=2060,
                     clearable=False,
                     className="full-width-input",
                 ),
@@ -93,9 +106,9 @@ def sidebar(df):
                     allowDeselect=True,
                     className="full-width-input",
 
-                    minDate="2014-12-04",
-                    maxDate="2017-01-10",
-                    defaultDate="2016-08-24",
+                    minDate="2019-11-01",
+                    maxDate="2019-12-31",
+                    defaultDate="2019-11-24",
 
                     firstDayOfWeek=0,
                     weekendDays=[0, 6],
