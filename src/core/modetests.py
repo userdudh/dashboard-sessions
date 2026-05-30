@@ -106,7 +106,7 @@ def _get_json_path(course_id, method_number):
     return Path(__file__).resolve().parents[2] / "data" / filename
 
 
-@lru_cache(maxsize=10)
+@lru_cache(maxsize=2)
 def _load_only_mode_users(mode, course_id, method_number):
     path = _get_json_path(course_id, method_number)
 
@@ -172,7 +172,7 @@ def _load_only_mode_users(mode, course_id, method_number):
     return df
 
 
-@lru_cache(maxsize=10)
+@lru_cache(maxsize=2)
 def get_special_mode_data(mode, course_id=2060):
     frames = []
 
@@ -188,7 +188,7 @@ def get_special_mode_data(mode, course_id=2060):
     return pd.concat(frames, ignore_index=True)
 
 
-@lru_cache(maxsize=10)
+@lru_cache(maxsize=2)
 def get_special_mode_sessions(mode, course_id=2060):
     df = get_special_mode_data(mode, course_id)
 

@@ -2,7 +2,6 @@ import pandas as pd
 import json
 from pathlib import Path
 
-
 def data_loader(courseid, method_number=1):
     filename = f"metodo{method_number}-curso{courseid}.json"
     relative_path = Path(__file__).parent.parent.parent / "data" / filename
@@ -22,24 +21,21 @@ def data_loader(courseid, method_number=1):
         else:
             course = dados
 
-        flat_data = []
         course_id = course.get("courseid")
 
-        for user in course.get("users", []):
-            username = user.get("userid")
-
-            for session in user.get("user_sessions", []):
-                sessao_id = session.get("sessao_id")
-
-                for event in session.get("events", []):
-                    flat_data.append({
-                        "courseid": course_id,
-                        "username": username,
-                        "sessao_id": sessao_id,
-                        "class": event.get("class"),
-                        "timecreated": event.get("t"),
-                        "datetime": event.get("t"),
-                    })
+        flat_data = [
+            {
+                "courseid": course_id,
+                "username": user.get("userid"),
+                "sessao_id": session.get("sessao_id"),
+                "class": event.get("class"),
+                "timecreated": event.get("t"),
+                "datetime": event.get("t"),
+            }
+            for user in course.get("users", [])
+            for session in user.get("user_sessions", [])
+            for event in session.get("events", [])
+        ]
 
         df = pd.DataFrame(flat_data)
 
@@ -49,6 +45,9 @@ def data_loader(courseid, method_number=1):
                 .dt.tz_convert("America/Recife")
                 .dt.tz_localize(None)
             )
+            
+            df["class"] = df["class"].astype("category")
+            df["username"] = df["username"].astype("category")
 
         return df
 

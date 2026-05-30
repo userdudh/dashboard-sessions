@@ -32,8 +32,8 @@ def fig_week_bars(payload, height=520):
 
     if not sessions.empty:
         sessions = sessions.copy()
-        sessions["inicio"] = pd.to_datetime(sessions["inicio"])
-        sessions["fim"] = pd.to_datetime(sessions["fim"])
+        sessions["inicio"] = pd.to_datetime(sessions["inicio"], format="%Y-%m-%d %H:%M:%S")
+        sessions["fim"] = pd.to_datetime(sessions["fim"], format="%Y-%m-%d %H:%M:%S")
 
         if "display_name" in sessions.columns:
             sessions = sessions[sessions["display_name"] == aluno]

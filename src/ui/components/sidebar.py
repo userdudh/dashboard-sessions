@@ -31,23 +31,6 @@ def make_course_options(df):
         for c in sorted(courses)
     ]
 
-
-def make_user_options(df):
-    users_df = (
-        df[["username", "display_name"]]
-        .drop_duplicates()
-        .sort_values("display_name")
-    )
-
-    return [
-        {
-            "label": row["display_name"],
-            "value": row["username"],
-        }
-        for _, row in users_df.iterrows()
-    ]
-
-
 def sidebar(df):
     return dbc.Card(
         dbc.CardBody(

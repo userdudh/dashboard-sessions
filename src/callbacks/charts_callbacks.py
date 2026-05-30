@@ -91,11 +91,9 @@ def register_charts_callbacks(app, _):
                 "end": end,
             }
 
-        dff = df_clean.copy()
+        name_map = df_clean.set_index("username")["display_name"].to_dict()
 
-        name_map = dff.set_index("username")["display_name"].to_dict()
-
-        dff = dff[dff["username"].isin(users)]
+        dff = df_clean[df_clean["username"].isin(users)]
 
         start_dt = pd.to_datetime(start)
         end_dt = pd.to_datetime(end) + pd.Timedelta(days=1)

@@ -12,7 +12,7 @@ def preprocess(df):
     
     return df
 
-@lru_cache(maxsize=20)
+@lru_cache(maxsize=2)
 def get_clean_data(courseid, method_number):
     df_raw = data_loader(courseid, method_number)
     return preprocess(df_raw)
