@@ -21,7 +21,7 @@ def _aggregate_sessions(df):
             return "Apenas eventos de acesso a disciplina nesta sessão"
         
         contagem = eventos.value_counts()
-        return "<br>".join([f"{EVENTOS_TRADUZIDOS.get(cls, cls)}: {qtd}" for cls, qtd in contagem.items()])
+        return "<br>".join([f"{EVENTOS_TRADUZIDOS.get(cls, cls)}: {qtd}" for cls, qtd in contagem.items() if qtd > 0])
 
     dataframe = (
         df.groupby(["username", "sessao_id"], as_index=False)
