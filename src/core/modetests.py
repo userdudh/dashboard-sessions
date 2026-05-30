@@ -13,9 +13,9 @@ MODE_PROFILES = {
         },
         {
             "label": "Marcos Vinícius",
-            "username_original": "55760",
+            "username_original": "139224",
             "metodo": 1,
-            "value": "55760_m1",
+            "value": "139224_m1",
         },
         {
             "label": "Isadora Machado",
@@ -25,36 +25,36 @@ MODE_PROFILES = {
         },
         {
             "label": "Mirella Peixoto",
-            "username_original": "55760",
+            "username_original": "139224",
             "metodo": 2,
-            "value": "55760_m2",
+            "value": "139224_m2",
         },
     ],
 
     "train": [
         {
             "label": "Juliana Meireles",
-            "username_original": "137654",
+            "username_original": "138195",
             "metodo": 1,
-            "value": "137654_m1",
+            "value": "138195_m1",
         },
         {
             "label": "Beatriz Lemos",
-            "username_original": "122377",
+            "username_original": "138579",
             "metodo": 1,
-            "value": "122377_m1",
+            "value": "138579_m1",
         },
         {
             "label": "Camila Viana",
-            "username_original": "137654",
+            "username_original": "138195",
             "metodo": 2,
-            "value": "137654_m2",
+            "value": "138195_m2",
         },
         {
             "label": "Breno Assunção",
-            "username_original": "122377",
+            "username_original": "138579",
             "metodo": 2,
-            "value": "122377_m2",
+            "value": "138579_m2",
         },
     ],
 }
