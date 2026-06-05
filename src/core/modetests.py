@@ -7,27 +7,27 @@ MODE_PROFILES = {
     "test": [
         {
             "label": "Cauã Nogueira",
-            "username_original": "124387",
+            "username_original": "55760",
             "metodo": 1,
-            "value": "124387_m1",
+            "value": "55760_m1",
         },
         {
             "label": "Marcos Vinícius",
-            "username_original": "139224",
+            "username_original": "137654",
             "metodo": 1,
-            "value": "139224_m1",
+            "value": "137654_m1",
         },
         {
             "label": "Isadora Machado",
-            "username_original": "124387",
+            "username_original": "55760",
             "metodo": 2,
-            "value": "124387_m2",
+            "value": "55760_m2",
         },
         {
             "label": "Mirella Peixoto",
-            "username_original": "139224",
+            "username_original": "137654",
             "metodo": 2,
-            "value": "139224_m2",
+            "value": "137654_m2",
         },
     ],
 
