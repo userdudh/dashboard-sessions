@@ -1,4 +1,5 @@
 from dash import Input, Output, State, ctx
+from dash.exceptions import PreventUpdate
 
 from src.core.preprocess import get_clean_data
 from src.core.modetests import SPECIAL_MODES, get_mode_options
@@ -149,11 +150,11 @@ def register_sidebar_callbacks(app, _):
         State("order-select", "value"),
     )
     def build_filters(method, course, users, date_value, order):
-        start, end = None, None
+        if not date_value or len(date_value) < 2 or date_value[0] is None or date_value[1] is None:
+            raise PreventUpdate
 
-        if date_value and len(date_value) == 2:
-            start = date_value[0]
-            end = date_value[1] or date_value[0]
+        start = date_value[0]
+        end = date_value[1]
 
         users_list = [users] if users else []
 
@@ -165,4 +166,4 @@ def register_sidebar_callbacks(app, _):
             "start": start,
             "end": end,
         }
-    
+        

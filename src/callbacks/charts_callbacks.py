@@ -1,5 +1,6 @@
 import pandas as pd
 from dash import Input, Output
+from dash.exceptions import PreventUpdate
 
 from src.core.session_methods import method_1, method_2
 from src.core.preprocess import get_clean_data
@@ -25,11 +26,17 @@ def register_charts_callbacks(app, _):
         ],
     )
     def compute_sessions(filters, mode):
-        start = filters.get("start") if filters else None
-        end = filters.get("end") if filters else None
-        users = filters.get("users", []) if filters else []
+        if not filters:
+            raise PreventUpdate
 
-        if not start or not end or len(users) != 1:
+        start = filters.get("start")
+        end = filters.get("end")
+        users = filters.get("users", [])
+
+        if not start or not end:
+            raise PreventUpdate
+
+        if len(users) != 1:
             return {
                 "sessions": [],
                 "users": [],
@@ -77,8 +84,8 @@ def register_charts_callbacks(app, _):
                 "end": end,
             }
 
-        course_id = filters.get("course", 2060) if filters else 2060
-        method_key = filters.get("method", "m1") if filters else "m1"
+        course_id = filters.get("course", 2060)
+        method_key = filters.get("method", "m1")
         method_num = 1 if method_key == "m1" else 2
 
         df_clean = get_clean_data(course_id, method_num)

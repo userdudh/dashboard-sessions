@@ -4,6 +4,18 @@ import dash_bootstrap_components as dbc
 
 from src.ui.components.sidebar import sidebar
 
+custom_loading_element = html.Div(
+    [
+        dmc.Loader(
+            color="#265fa3",
+            size="lg",       
+            variant="oval",
+            style={"marginBottom": "16px"}
+        ),
+        html.P("Carregando...", className="loading-spinner-text")
+    ],
+    className="custom-loading-wrapper"
+)
 
 def create_layout(df):
     return dmc.MantineProvider(
@@ -141,27 +153,35 @@ def create_layout(df):
                         ],
                     ),
 
-                    dbc.Row(
-                        [
-                            dbc.Col(
-                                sidebar(df),
-                                className="sidebar-container d-flex flex-column",
-                            ),
-
-                            dbc.Col(
-                                dbc.Card(
-                                    dbc.CardBody(
-                                        [
-                                            dcc.Store(id="sessions-store"),
-                                            dcc.Graph(id="graph-2"),
-                                        ]
+                    dcc.Loading(
+                        id="loading-overlay",
+                        fullscreen=True,
+                        custom_spinner=custom_loading_element,
+                        delay_show=500,
+                        children=[
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        sidebar(df),
+                                        className="sidebar-container d-flex flex-column",
                                     ),
-                                    className="h-100",
-                                ),
-                                className="chart-container d-flex flex-column",
-                            ),
-                        ],
-                        className="g-3 dashboard-row",
+
+                                    dbc.Col(
+                                        dbc.Card(
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Store(id="sessions-store"),
+                                                    dcc.Graph(id="graph-2"),
+                                                ]
+                                            ),
+                                            className="h-100",
+                                        ),
+                                        className="chart-container d-flex flex-column",
+                                    ),
+                                ],
+                                className="g-3 dashboard-row",
+                            )
+                        ]
                     ),
                 ],
                 className="py-3",
