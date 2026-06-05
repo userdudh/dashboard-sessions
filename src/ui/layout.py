@@ -157,7 +157,7 @@ def create_layout(df):
                         id="loading-overlay",
                         fullscreen=True,
                         custom_spinner=custom_loading_element,
-                        delay_show=100,
+                        delay_show=300,
                         children=[
                             dbc.Row(
                                 [
