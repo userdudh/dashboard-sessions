@@ -34,27 +34,27 @@ MODE_PROFILES = {
     "train": [
         {
             "label": "Juliana Meireles",
-            "username_original": "138195",
+            "username_original": "46604",
             "metodo": 1,
-            "value": "138195_m1",
+            "value": "46604_m1",
         },
         {
             "label": "Beatriz Lemos",
-            "username_original": "138579",
+            "username_original": "122377",
             "metodo": 1,
-            "value": "138579_m1",
+            "value": "122377_m1",
         },
         {
             "label": "Camila Viana",
-            "username_original": "138195",
+            "username_original": "46604",
             "metodo": 2,
-            "value": "138195_m2",
+            "value": "46604_m2",
         },
         {
             "label": "Breno Assunção",
-            "username_original": "138579",
+            "username_original": "122377",
             "metodo": 2,
-            "value": "138579_m2",
+            "value": "122377_m2",
         },
     ],
 }
