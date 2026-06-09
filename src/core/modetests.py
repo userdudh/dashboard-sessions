@@ -6,25 +6,25 @@ import pandas as pd
 MODE_PROFILES = {
     "test": [
         {
-            "label": "Cauã Nogueira",
+            "label": "José dos Santos",
             "username_original": "55760",
             "metodo": 1,
             "value": "55760_m1",
         },
         {
-            "label": "Marcos Vinícius",
+            "label": "Pedro Albuquerque",
             "username_original": "137654",
             "metodo": 1,
             "value": "137654_m1",
         },
         {
-            "label": "Isadora Machado",
+            "label": "Maria da Silva",
             "username_original": "55760",
             "metodo": 2,
             "value": "55760_m2",
         },
         {
-            "label": "Mirella Peixoto",
+            "label": "Júlia Vasconcelos",
             "username_original": "137654",
             "metodo": 2,
             "value": "137654_m2",
